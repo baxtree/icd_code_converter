@@ -1,0 +1,52 @@
+#!/usr/bin/env Rscript
+
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+
+if (!require("touch", quietly = T)) install.packages("touch")
+library(touch, quietly = T)
+
+if (!require("argparser", quietly = T)) install.packages("argparser")
+library(argparser, quietly = T)
+
+parser <- arg_parser("Convert an ICD-9 code to ICD-10 codes", hide.opts = T)
+parser <- add_argument(parser, "--icd9", help="The ICD-9 code", short="-i9")
+parser <- add_argument(parser, "--icd10", help="The ICD-10 code", short="-i10")
+argv <- parse_args(parser)
+
+icd9_code = argv$icd9
+icd10_code = argv$icd10
+
+if (!is.na(icd9_code) && !is.na(icd10_code)) {
+    print("The ICD-9 code and the ICD-10 code cannot be passed in at the same time")
+    quit(save = "no", status = 10, runLast = F)
+}
+
+if (!is.na(icd9_code)) {
+    tryCatch(
+        {
+            icd10_code = icd_map(c(icd9_code), from = 9, to = 10, nomatch = NA)
+            cat(icd10_code, sep=",")
+        },
+        error = function(cond) {
+            cat(NA)
+        },
+        warning = function(cond) {
+            cat(NA)
+        }
+    )
+} else if (!is.na(icd10_code)) {
+    tryCatch(
+        {
+            icd9_code = icd_map(c(icd10_code), from = 10, to = 9, nomatch = NA)
+            cat(icd9_code, sep=",")
+        },
+        error = function(cond) {
+            cat(NA)
+        },
+        warning = function(cond) {
+            cat(NA)
+        }
+    )
+} else {
+    print(parser)
+}
