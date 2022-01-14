@@ -2,15 +2,15 @@
 
 options(repos = list(CRAN="http://cran.rstudio.com/"))
 
-if (!require("touch", quietly = T)) install.packages("touch")
+if (!require("touch", quietly = T)) install.packages("touch", quiet = T)
 library(touch, quietly = T)
 
-if (!require("argparser", quietly = T)) install.packages("argparser")
+if (!require("argparser", quietly = T)) install.packages("argparser", quiet = T)
 library(argparser, quietly = T)
 
 parser <- arg_parser("Convert between ICD-9 codes and ICD-10 codes", hide.opts = T)
-parser <- add_argument(parser, "--icd9", help="The ICD-9 code", short="-n")
-parser <- add_argument(parser, "--icd10", help="The ICD-10 code", short="-t")
+parser <- add_argument(parser, "--icd9", help = "The ICD-9 code", short = "-n")
+parser <- add_argument(parser, "--icd10", help = "The ICD-10 code", short = "-t")
 argv <- parse_args(parser)
 
 icd9_code = argv$icd9
