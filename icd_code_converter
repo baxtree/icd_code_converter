@@ -1,63 +1,76 @@
-#!/usr/bin/env Rscript
+#!/usr/bin/env -S Rscript --vanilla
 
-options(repos = list(CRAN="http://cran.rstudio.com/"))
+args = commandArgs(trailingOnly = T)
 
-if (!require("touch", quietly = T)) install.packages("touch", quiet = T)
-library(touch, quietly = T)
+if (length(args) == 0) {
+    cat("No arguments passed in\n")
+    quit(save = "no", status = 1, runLast = F)
+} else if (args[1] == "prepare") {
+    options(repos = list(CRAN = "http://cran.rstudio.com/"))
 
-if (!require("argparser", quietly = T)) install.packages("argparser", quiet = T)
-library(argparser, quietly = T)
+    if (!require("argparser", quietly = T)) {
+        install.packages("argparser", quiet = T)
+    }
 
-parser <- arg_parser("Convert between ICD-9 codes and ICD-10 codes", hide.opts = T)
-parser <- add_argument(parser, "--icd9", help = "single ICD-9 code or semicolon-separated ICD-9 codes", short = "-n")
-parser <- add_argument(parser, "--icd10", help = "single ICD-10 code or semicolon-separated ICD-10 codes", short = "-t")
-parser <- add_argument(parser, "--delimiter", help = "symbol for separating ICD codes and cannot be ','", short = "-d", default=";")
+    if (!require("touch", quietly = T)) {
+        install.packages("touch", quiet = T)
+    }
 
-argv <- parse_args(parser)
-
-icd9_codes = argv$icd9
-icd10_codes = argv$icd10
-delimiter = argv$delimiter
-
-if (!is.na(icd9_codes) && !is.na(icd10_codes)) {
-    print("The ICD-9 code and the ICD-10 code cannot be passed in at the same time")
-    quit(save = "no", status = 10, runLast = F)
-}
-
-icd9_to_icd10 <- function(icd9_codes) {
-    tryCatch(
-        {
-            icd10_codes = icd_map(unlist(strsplit(icd9_codes, split=delimiter)), from = 9, to = 10, nomatch = NA)
-            cat(icd10_codes, sep=delimiter)
-        },
-        error = function(cond) {
-            cat(NA)
-        },
-        warning = function(cond) {
-            cat(NA)
-        }
-    )
-}
-
-icd10_to_icd9 <- function(icd10_codes) {
-    tryCatch(
-        {
-            icd9_codes = icd_map(unlist(strsplit(icd10_codes, split=delimiter)), from = 10, to = 9, nomatch = NA)
-            cat(icd9_codes, sep=delimiter)
-        },
-        error = function(cond) {
-            cat(NA)
-        },
-        warning = function(cond) {
-            cat(NA)
-        }
-    )
-}
-
-if (!is.na(icd9_codes)) {
-    icd9_to_icd10(icd9_codes)
-} else if (!is.na(icd10_codes)) {
-    icd10_to_icd9(icd10_codes)
+    cat("The icd_code_convert is ready to use\n")
 } else {
-    print(parser)
+    library(touch, quietly = T)
+    library(argparser, quietly = T)
+
+    parser <- arg_parser("Convert between ICD-9 codes and ICD-10 codes", hide.opts = T)
+    parser <- add_argument(parser, "--icd9", help = "single ICD-9 code or semicolon-separated ICD-9 codes", short = "-n")
+    parser <- add_argument(parser, "--icd10", help = "single ICD-10 code or semicolon-separated ICD-10 codes", short = "-t")
+    parser <- add_argument(parser, "--delimiter", help = "symbol for separating ICD codes and cannot be ','", short = "-d", default = ";")
+    argv <- parse_args(parser)
+
+    icd9_codes = argv$icd9
+    icd10_codes = argv$icd10
+    delimiter = argv$delimiter
+
+    if (!is.na(icd9_codes) && !is.na(icd10_codes)) {
+        cat("The ICD-9 code and the ICD-10 code cannot be passed in at the same time\n")
+        quit(save = "no", status = 1, runLast = F)
+    }
+
+    icd9_to_icd10 <- function(icd9_codes) {
+        tryCatch(
+            {
+                icd10_codes = icd_map(unlist(strsplit(icd9_codes, split = delimiter)), from = 9, to = 10, nomatch = NA)
+                cat(icd10_codes, sep=delimiter)
+            },
+            error = function(cond) {
+                cat(NA)
+            },
+            warning = function(cond) {
+                cat(NA)
+            }
+        )
+    }
+
+    icd10_to_icd9 <- function(icd10_codes) {
+        tryCatch(
+            {
+                icd9_codes = icd_map(unlist(strsplit(icd10_codes, split = delimiter)), from = 10, to = 9, nomatch = NA)
+                cat(icd9_codes, sep=delimiter)
+            },
+            error = function(cond) {
+                cat(NA)
+            },
+            warning = function(cond) {
+                cat(NA)
+            }
+        )
+    }
+
+    if (!is.na(icd9_codes)) {
+        icd9_to_icd10(icd9_codes)
+    } else if (!is.na(icd10_codes)) {
+        icd10_to_icd9(icd10_codes)
+    } else {
+        print(parser)
+    }
 }

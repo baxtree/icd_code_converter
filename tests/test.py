@@ -9,7 +9,7 @@ class IcdCodeConverterTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.command_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "icd_code_converter")
-        subprocess.Popen([self.command_path, "-h"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+        subprocess.Popen([self.command_path, "prepare"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
     def test_convert_icd9(self) -> None:
         icd9_code = "401.9"

@@ -2,12 +2,17 @@
 Command line interface for converting between ICD-9 codes and ICD-10 codes. It functions as a thin wrapper of [touch.icd_map](https://hub.wwenjie.org/touch/).
 
 # Prerequisites
-- The [R language and environment](https://cloud.r-project.org/) has been downloaded and installed.
-
-- Your login user needs to have the permission for installing R libraries. Otherwise, try `sudo usermod -a -G staff $USER`.
+The [R language and environment](https://cloud.r-project.org/) has been downloaded and installed. Your logged-in user needs to have the permission for installing R libraries.
 
 # Examples
 ```
+# Resolve dependencies
+
+$ ./icd_code_converter prepare
+```
+```
+# Convert ICD codes
+
 $ ./icd_code_converter --icd9 "401.9"                       # I10,I169
 $ ./icd_code_converter --icd10 "I10;I169"                   # 4010,4011,4019;4019
 $ ./icd_code_converter --icd9 "401.9=001.1" --delimiter "=" # I10,I169=A001
