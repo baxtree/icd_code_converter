@@ -1,4 +1,4 @@
-# icd_code_converter
+# ICD Code Converter
 Command line interface for converting between ICD-9 codes and ICD-10 codes. It functions as a thin wrapper of [touch](https://CRAN.R-project.org/package=touch).
 
 [![Build Status](https://github.com/baxtree/icd_code_converter/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/baxtree/icd_code_converter/actions/workflows/main.yml?query=branch%3Amain)
