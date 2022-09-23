@@ -1,6 +1,3 @@
-import imp
-
-
 import os
 import subprocess
 import unittest

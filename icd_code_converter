@@ -1,26 +1,22 @@
 #!/usr/bin/env -S Rscript --vanilla
 
 args <- commandArgs(trailingOnly = TRUE)
-argparser_version <- "0.7.1"
-touch_version <- "0.1.6"
 
 if (length(args) == 0) {
     cat("No arguments passed in\n")
     quit(save = "no", status = 1, runLast = FALSE)
 } else if (args[1] == "prepare") {
-    options(repos = list(CRAN = "http://cran.rstudio.com/"))
-
-    if (!require("devtools", quietly = TRUE)) {
-        install.packages("devtools", quiet = TRUE)
-    }
-    library(devtools, quietly = TRUE)
+    local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org"
+        options(repos=r)
+    })
 
     if (!require("argparser", quietly = TRUE)) {
-        devtools::install_version("argparser", version = argparser_version, repos = "http://cran.rstudio.com", upgrade =  "never", quiet = TRUE)
+        install.packages("argparser", quiet = TRUE)
     }
 
     if (!require("touch", quietly = TRUE)) {
-        devtools::install_version("touch", version = touch_version, repos = "http://cran.rstudio.com", upgrade =  "never", quiet = TRUE)
+        install.packages("touch", quiet = TRUE)
     }
 
     cat("The icd_code_convert is ready to use\n")
