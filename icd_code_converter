@@ -1,46 +1,53 @@
 #!/usr/bin/env -S Rscript --vanilla
 
-args = commandArgs(trailingOnly = T)
+args <- commandArgs(trailingOnly = TRUE)
+argparser_version <- "0.7.1"
+touch_version <- "0.1.6"
 
 if (length(args) == 0) {
     cat("No arguments passed in\n")
-    quit(save = "no", status = 1, runLast = F)
+    quit(save = "no", status = 1, runLast = FALSE)
 } else if (args[1] == "prepare") {
     options(repos = list(CRAN = "http://cran.rstudio.com/"))
 
-    if (!require("argparser", quietly = T)) {
-        install.packages("argparser", quiet = T)
+    if (!require("devtools", quietly = TRUE)) {
+        install.packages("devtools", quiet = TRUE)
+    }
+    library(devtools, quietly = TRUE)
+
+    if (!require("argparser", quietly = TRUE)) {
+        devtools::install_version("argparser", version = argparser_version, repos = "http://cran.rstudio.com", upgrade =  "never", quiet = TRUE)
     }
 
-    if (!require("touch", quietly = T)) {
-        install.packages("touch", quiet = T)
+    if (!require("touch", quietly = TRUE)) {
+        devtools::install_version("touch", version = touch_version, repos = "http://cran.rstudio.com", upgrade =  "never", quiet = TRUE)
     }
 
     cat("The icd_code_convert is ready to use\n")
 } else {
-    library(touch, quietly = T)
-    library(argparser, quietly = T)
+    library(touch, quietly = TRUE)
+    library(argparser, quietly = TRUE)
 
-    parser <- arg_parser("Convert between ICD-9 codes and ICD-10 codes", hide.opts = T)
+    parser <- arg_parser("Convert between ICD-9 codes and ICD-10 codes", hide.opts = TRUE)
     parser <- add_argument(parser, "--icd9", help = "single ICD-9 code or semicolon-separated ICD-9 codes", short = "-n")
     parser <- add_argument(parser, "--icd10", help = "single ICD-10 code or semicolon-separated ICD-10 codes", short = "-t")
     parser <- add_argument(parser, "--delimiter", help = "symbol for separating ICD codes and cannot be ','", short = "-d", default = ";")
     argv <- parse_args(parser)
 
-    icd9_codes = argv$icd9
-    icd10_codes = argv$icd10
-    delimiter = argv$delimiter
+    icd9_codes <- argv$icd9
+    icd10_codes <- argv$icd10
+    delimiter <- argv$delimiter
 
     if (!is.na(icd9_codes) && !is.na(icd10_codes)) {
         cat("The ICD-9 code and the ICD-10 code cannot be passed in at the same time\n")
-        quit(save = "no", status = 1, runLast = F)
+        quit(save = "no", status = 1, runLast = FALSE)
     }
 
     icd9_to_icd10 <- function(icd9_codes) {
         tryCatch(
             {
-                icd10_codes = icd_map(unlist(strsplit(icd9_codes, split = delimiter)), from = 9, to = 10, nomatch = NA)
-                cat(icd10_codes, sep=delimiter)
+                icd10_codes <- icd_map(unlist(strsplit(icd9_codes, split = delimiter)), from = 9, to = 10, nomatch = NA)
+                cat(icd10_codes, sep = delimiter)
             },
             error = function(cond) {
                 cat(NA)
@@ -54,8 +61,8 @@ if (length(args) == 0) {
     icd10_to_icd9 <- function(icd10_codes) {
         tryCatch(
             {
-                icd9_codes = icd_map(unlist(strsplit(icd10_codes, split = delimiter)), from = 10, to = 9, nomatch = NA)
-                cat(icd9_codes, sep=delimiter)
+                icd9_codes <- icd_map(unlist(strsplit(icd10_codes, split = delimiter)), from = 10, to = 9, nomatch = NA)
+                cat(icd9_codes, sep = delimiter)
             },
             error = function(cond) {
                 cat(NA)
